@@ -1,40 +1,24 @@
-[{
-        "task-title": "Home",
-        "subtask-list": [{
-                "subtask-title": "Get Laundry",
-                "subtask-detail": "Get laundty from brooks dry cleaners",
-                "subtask-start": "2021-11-15T13:15:00",
-                "subtask-end": "2021-11-15T13:15:00"
-            },
-            {
-                "subtask-title": "Buy Milk",
-                "subtask-detail": "Buy milk from more",
-                "subtask-start": "2021-11-15T14:40:00",
-                "subtask-end": "2021-11-15T14:40:00"
-            },
-            {
-                "subtask-title": "Pick Rom",
-                "subtask-detail": "Pick Ron from school",
-                "subtask-start": "2021-11-15T17:30:00",
-                "subtask-end": "2021-11-15T17:30:00"
-            }
-        ]
+[
+    {
+        "title": "Get Laundry",
+        "detail": "Get laundty from brooks dry cleaners",
+        "start": "2021-11-15T13:15:00",
+        "end": "2021-11-15T13:15:00",
+        "isCompleted": false
     },
     {
-        "task-title": "Office",
-        "subtask-list": [{
-                "subtask-title": "Schedule meeting with Mr Pramod",
-                "subtask-detail": "Schedule meeting with Mr Pramod",
-                "subtask-start": "2021-12-15T13:00:00",
-                "subtask-end": "2021-12-15T13:30:00"
-
-            },
-            {
-                "subtask-title": "Submit Report",
-                "subtask-detail": "Submit report to Gerald Sir",
-                "subtask-start": "2021-12-15T16:00:00",
-                "subtask-end": "2021-12-15T16:00:00"
-            }
-        ]
+        "title": "Schedule meeting with Mr Pramod",
+        "detail": "Schedule meeting with Mr Pramod",
+        "start": "2021-12-15T13:00:00",
+        "end": "2021-12-15T13:30:00",
+        "isCompleted": false
+    },
+    {
+        "title": "Schedule meeting with Mr Ajay",
+        "detail": "Schedule meeting with Mr Ajay",
+        "start": "2021-12-15T15:00:00",
+        "end": "2021-12-15T15:30:00",
+        "isCompleted": false
     }
+    
 ]

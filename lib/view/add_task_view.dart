@@ -1,28 +1,30 @@
-// ignore_for_file: must_be_immutable
-
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taskmanager/controller/task_controller.dart';
-import 'package:taskmanager/model/task_model.dart';
 import 'package:taskmanager/util/appUtil.dart';
 
-class AddTaskView extends StatelessWidget {
-  final TaskController _taskController = Get.find();
+class AddTask extends StatelessWidget with AppUtil {
+  final TaskController taskController = Get.find();
   final taskTitleCtrl = TextEditingController();
-  final subtaskTitleCtrl = TextEditingController();
-  final subtaskDetailCtrl = TextEditingController();
+  final taskDetailCtrl = TextEditingController();
   final startDateCtrl = TextEditingController();
   final endDateCtrl = TextEditingController();
   DateTime startDate = DateTime.now();
-  DateTime endDate = DateTime.now();
-
-  AddTaskView({Key? key}) : super(key: key);
+  DateTime? endDate;
   @override
   Widget build(BuildContext context) {
+    final taskGroup = ModalRoute.of(context)!.settings.arguments;
     return Scaffold(
-        backgroundColor: Colors.grey[200],
+        backgroundColor: Colors.blueGrey[900],
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          title: Text(
+            'Task Manager',
+            style: GoogleFonts.raleway(),
+          ),
+        ),
         body: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,8 +32,9 @@ class AddTaskView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Text(
-                  'Add Tasks',
+                  taskGroup.toString(),
                   style: GoogleFonts.raleway(
+                    color: Colors.white,
                     fontSize: 24,
                     fontWeight: FontWeight.w600,
                   ),
@@ -50,27 +53,6 @@ class AddTaskView extends StatelessWidget {
                       child: TextFormField(
                         controller: taskTitleCtrl,
                         decoration: InputDecoration(
-                            hintText: 'Task Group',
-                            isDense: true,
-                            hintStyle: GoogleFonts.raleway(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            border: const OutlineInputBorder(
-                                borderSide: BorderSide.none)),
-                      ),
-                    ),
-                  ),
-                  //Subtask Title
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Material(
-                      elevation: 6,
-                      shadowColor: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(6),
-                      child: TextFormField(
-                        controller: subtaskTitleCtrl,
-                        decoration: InputDecoration(
                             hintText: 'Task Title',
                             isDense: true,
                             hintStyle: GoogleFonts.raleway(
@@ -82,7 +64,7 @@ class AddTaskView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  //Subtask Desc
+                  //task Desc
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Material(
@@ -90,7 +72,7 @@ class AddTaskView extends StatelessWidget {
                       shadowColor: Colors.grey[300],
                       borderRadius: BorderRadius.circular(6),
                       child: TextFormField(
-                        controller: subtaskDetailCtrl,
+                        controller: taskDetailCtrl,
                         textInputAction: TextInputAction.done,
                         minLines: 3,
                         maxLines: 5,
@@ -124,8 +106,7 @@ class AddTaskView extends StatelessWidget {
                                 DatePicker.showDateTimePicker(context,
                                     onChanged: (val) {
                                   startDate = val;
-                                  startDateCtrl.text =
-                                      AppUtil.formatter.format(val);
+                                  startDateCtrl.text = formatter.format(val);
                                 });
                               },
                               controller: startDateCtrl,
@@ -158,8 +139,7 @@ class AddTaskView extends StatelessWidget {
                                 DatePicker.showDateTimePicker(context,
                                     onChanged: (val) {
                                   endDate = val;
-                                  endDateCtrl.text =
-                                      AppUtil.formatter.format(val);
+                                  endDateCtrl.text = formatter.format(val);
                                 });
                               },
                               decoration: InputDecoration(
@@ -187,21 +167,12 @@ class AddTaskView extends StatelessWidget {
                     backgroundColor: MaterialStateProperty.all(Colors.black),
                   ),
                   onPressed: () {
-                    if (startDateCtrl.text.isNotEmpty &&
-                        endDateCtrl.text.isEmpty) {
-                      endDate = startDate;
-                    }
-                    _taskController.tasks.add(
-                      TaskModel(
-                        taskTitle: taskTitleCtrl.text,
-                        subtaskList: [
-                          SubtaskList(
-                              subtaskTitle: subtaskTitleCtrl.text,
-                              subtaskDetail: subtaskDetailCtrl.text,
-                              subtaskStart: startDate,
-                              subtaskEnd: endDate),
-                        ],
-                      ),
+                    taskController.addTask(
+                      groupName: taskGroup.toString(),
+                      taskTitle: taskTitleCtrl.text,
+                      taskDesc: taskDetailCtrl.text,
+                      startDate: startDate,
+                      endDate: endDate,
                     );
                     Get.back();
                   },
