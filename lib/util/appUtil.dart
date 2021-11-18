@@ -30,6 +30,7 @@ mixin AppUtil {
           shadowColor: Colors.grey[300],
           borderRadius: BorderRadius.circular(6),
           child: TextFormField(
+            autofocus: true,
             controller: groupNameCtrl,
             decoration: InputDecoration(
                 hintText: 'Category',

@@ -35,7 +35,6 @@ class TaskGroups extends HookWidget with AppUtil {
   @override
   Widget build(BuildContext context) {
     final navigatorIndex = useState(0);
-
     return Scaffold(
       backgroundColor: Colors.blueGrey[900],
 

@@ -12,7 +12,7 @@ class AddTask extends StatelessWidget with AppUtil {
   final startDateCtrl = TextEditingController();
   final endDateCtrl = TextEditingController();
   DateTime startDate = DateTime.now();
-  DateTime? endDate;
+  DateTime endDate = DateTime.now();
   @override
   Widget build(BuildContext context) {
     final taskGroup = ModalRoute.of(context)!.settings.arguments;

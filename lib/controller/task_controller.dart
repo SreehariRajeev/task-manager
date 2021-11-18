@@ -36,6 +36,7 @@ class TaskController extends GetxController with AppUtil {
     } else {
       taskGroups.add(GroupModel(group: 'Home'));
     }
+    loadTasks(taskGroups[0].group);
   }
 
   //Create Group Function
@@ -75,12 +76,12 @@ class TaskController extends GetxController with AppUtil {
       isCompleted: false,
     ));
 
-    GetStorage().write(groupName, tasks.toList().obs);
+    GetStorage().write(groupName, tasks.toList());
   }
 
   //Update Task Function
   updateTask(String key) {
-    GetStorage().write(key, tasks.toList().obs);
+    GetStorage().write(key, tasks.toList());
   }
 
   String checkDate(DateTime date) {
