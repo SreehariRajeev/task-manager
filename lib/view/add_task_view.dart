@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'package:taskmanager/controller/task_controller.dart';
 import 'package:taskmanager/util/appUtil.dart';
+import 'styles/text_field_decoration.dart';
+import 'widgets/custom_widgets.dart';
 
-class AddTask extends StatelessWidget with AppUtil {
+class AddTask extends StatelessWidget with AppUtil, CustomDecoration {
   final TaskController taskController = Get.find();
-  final taskTitleCtrl = TextEditingController();
+
+  ValueNotifier<TextEditingController> taskTitleCtrl =
+      ValueNotifier(TextEditingController());
   final taskDetailCtrl = TextEditingController();
   final startDateCtrl = TextEditingController();
   final endDateCtrl = TextEditingController();
@@ -17,27 +22,17 @@ class AddTask extends StatelessWidget with AppUtil {
   Widget build(BuildContext context) {
     final taskGroup = ModalRoute.of(context)!.settings.arguments;
     return Scaffold(
-        backgroundColor: Colors.blueGrey[900],
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          title: Text(
-            'Task Manager',
-            style: GoogleFonts.raleway(),
-          ),
-        ),
+        backgroundColor: Theme.of(context).backgroundColor,
+        appBar: customAppBar,
         body: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              //Header
               Padding(
                 padding: const EdgeInsets.all(12.0),
-                child: Text(
-                  taskGroup.toString(),
-                  style: GoogleFonts.raleway(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                  ),
+                child: CategoryTitleWidget(
+                  title: taskGroup.toString(),
                 ),
               ),
               //Fields
@@ -46,115 +41,29 @@ class AddTask extends StatelessWidget with AppUtil {
                   //Task Title
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Material(
-                      elevation: 6,
-                      shadowColor: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(6),
-                      child: TextFormField(
-                        controller: taskTitleCtrl,
-                        decoration: InputDecoration(
-                            hintText: 'Task Title',
-                            isDense: true,
-                            hintStyle: GoogleFonts.raleway(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            border: const OutlineInputBorder(
-                                borderSide: BorderSide.none)),
-                      ),
+                    child: TextFormField(
+                      controller: taskTitleCtrl.value,
+                      decoration:
+                          textFieldDecoration(hintTextStr: 'Task Title'),
                     ),
                   ),
                   //task Desc
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Material(
-                      elevation: 6,
-                      shadowColor: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(6),
-                      child: TextFormField(
-                        controller: taskDetailCtrl,
-                        textInputAction: TextInputAction.done,
-                        minLines: 3,
-                        maxLines: 5,
-                        decoration: InputDecoration(
-                          hintText: 'Describe your task',
-                          isDense: true,
-                          hintStyle: GoogleFonts.raleway(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          border: const OutlineInputBorder(
-                              borderSide: BorderSide.none),
-                        ),
-                      ),
+                    child: TextFormField(
+                      controller: taskDetailCtrl,
+                      minLines: 3,
+                      maxLines: 5,
+                      decoration: textFieldDecoration(
+                          hintTextStr: 'Describe your task'),
                     ),
                   ),
                   //Start Date
                   Row(
                     children: [
-                      Flexible(
-                        flex: 1,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Material(
-                            elevation: 6,
-                            shadowColor: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(6),
-                            child: TextFormField(
-                              readOnly: true,
-                              onTap: () {
-                                DatePicker.showDateTimePicker(context,
-                                    onChanged: (val) {
-                                  startDate = val;
-                                  startDateCtrl.text = formatter.format(val);
-                                });
-                              },
-                              controller: startDateCtrl,
-                              decoration: InputDecoration(
-                                  hintText: 'Start',
-                                  isDense: true,
-                                  hintStyle: GoogleFonts.raleway(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  border: const OutlineInputBorder(
-                                      borderSide: BorderSide.none)),
-                            ),
-                          ),
-                        ),
-                      ),
+                      Flexible(flex: 1, child: TaskStartDateField()),
                       //End Date
-                      Flexible(
-                        flex: 1,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Material(
-                            elevation: 6,
-                            shadowColor: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(6),
-                            child: TextFormField(
-                              readOnly: true,
-                              controller: endDateCtrl,
-                              onTap: () {
-                                DatePicker.showDateTimePicker(context,
-                                    onChanged: (val) {
-                                  endDate = val;
-                                  endDateCtrl.text = formatter.format(val);
-                                });
-                              },
-                              decoration: InputDecoration(
-                                  hintText: 'End',
-                                  isDense: true,
-                                  hintStyle: GoogleFonts.raleway(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  border: const OutlineInputBorder(
-                                      borderSide: BorderSide.none)),
-                            ),
-                          ),
-                        ),
-                      ),
+                      Flexible(flex: 1, child: TaskEndDateField()),
                     ],
                   ),
                 ],
@@ -162,28 +71,102 @@ class AddTask extends StatelessWidget with AppUtil {
               const SizedBox(height: 20),
               //Submit Btn
               Align(
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.black),
-                  ),
-                  onPressed: () {
-                    taskController.addTask(
-                      groupName: taskGroup.toString(),
-                      taskTitle: taskTitleCtrl.text,
-                      taskDesc: taskDetailCtrl.text,
-                      startDate: startDate,
-                      endDate: endDate,
-                    );
-                    Get.back();
-                  },
-                  child: Text(
-                    'Add',
-                    style: GoogleFonts.raleway(fontWeight: FontWeight.w600),
-                  ),
+                child: AddTaskSubmitBtn(
+                  taskGroup: taskGroup.toString(),
+                  taskTitleCtrl: taskTitleCtrl.value,
+                  taskDetailCtrl: taskDetailCtrl,
+                  startDate: taskController.startDate.value,
+                  endDate: taskController.endDate.value,
                 ),
               ),
             ],
           ),
+        ));
+  }
+}
+
+//End DT Field
+class TaskEndDateField extends StatelessWidget with AppUtil, CustomDecoration {
+  final TextEditingController dateCtrl = TextEditingController();
+  final TaskController taskController = Get.find();
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        readOnly: true,
+        controller: dateCtrl,
+        onTap: () {
+          DatePicker.showDateTimePicker(context, onChanged: (val) {
+            taskController.endDate = val.obs;
+            dateCtrl.text = formatter.format(val);
+          });
+        },
+        decoration: textFieldDecoration(hintTextStr: 'End'),
+      ),
+    );
+  }
+}
+
+//Start DT Field
+class TaskStartDateField extends StatelessWidget
+    with AppUtil, CustomDecoration {
+  final TextEditingController dateCtrl = TextEditingController();
+  final TaskController taskController = Get.find();
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        readOnly: true,
+        controller: dateCtrl,
+        onTap: () {
+          DatePicker.showDateTimePicker(context, onChanged: (val) {
+            taskController.startDate = val.obs;
+            dateCtrl.text = formatter.format(val);
+          });
+        },
+        decoration: textFieldDecoration(hintTextStr: 'Start'),
+      ),
+    );
+  }
+}
+
+//Add Task Submit Button
+class AddTaskSubmitBtn extends StatelessWidget {
+  AddTaskSubmitBtn(
+      {Key? key,
+      required this.taskTitleCtrl,
+      required this.taskDetailCtrl,
+      required this.startDate,
+      required this.endDate,
+      required this.taskGroup})
+      : super(key: key);
+  final TaskController taskController = Get.find();
+  final TextEditingController taskTitleCtrl;
+  final TextEditingController taskDetailCtrl;
+  final DateTime startDate;
+  final DateTime endDate;
+  final Object? taskGroup;
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.black),
+        ),
+        onPressed: () {
+          taskController.addTask(
+            groupName: taskGroup.toString(),
+            taskTitle: taskTitleCtrl.text,
+            taskDesc: taskDetailCtrl.text,
+            startDate: startDate,
+            endDate: endDate,
+          );
+          Get.back();
+        },
+        child: Text(
+          'Add',
+          style: GoogleFonts.raleway(fontWeight: FontWeight.w600),
         ));
   }
 }

@@ -8,6 +8,13 @@ import 'package:taskmanager/util/appUtil.dart';
 class TaskController extends GetxController with AppUtil {
   var taskGroups = <GroupModel>[].obs;
   var tasks = <TaskModel>[].obs;
+  var searchedTasks = <TaskModel>[].obs;
+  var _navigatorIndex = 0.obs;
+  var startDate = DateTime.now().obs;
+  var endDate = DateTime.now().obs;
+
+  set navigatorIndex(val) => _navigatorIndex = val;
+  int get navigatorIndex => _navigatorIndex.value;
 
   @override
   void onInit() {
@@ -57,8 +64,8 @@ class TaskController extends GetxController with AppUtil {
           searchResult.add(task);
         }
       }
+      searchedTasks = searchResult.obs;
     }
-    return searchResult;
   }
 
   //Add Task Function
@@ -96,5 +103,34 @@ class TaskController extends GetxController with AppUtil {
       displayDate = formatter2.format(date);
     }
     return displayDate;
+  }
+
+  navigationFunction({required String navigateTo}) {
+    int index = navigatorIndex;
+    if (navigateTo == 'next') {
+      index++;
+    } else if (navigateTo == 'previous') {
+      index--;
+    }
+    navigatorIndex = index.obs;
+    log(navigatorIndex.toString());
+  }
+
+  bool checkIfSearchedTaskNotEmpty() {
+    return searchedTasks.isNotEmpty;
+  }
+
+  String getGroupName() {
+    log(navigatorIndex.toString());
+    log("${taskGroups[navigatorIndex].group} as datas");
+    return taskGroups[navigatorIndex].group;
+  }
+
+  bool checkTaskIsCompleted(int index) {
+    return tasks[index].isCompleted;
+  }
+
+  clearStorage() {
+    GetStorage().erase();
   }
 }

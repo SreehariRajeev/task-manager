@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
       title: 'Task Manager',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        backgroundColor: Colors.blueGrey[900],
       ),
       routes: {
         '/': (context) => TaskManager(),
