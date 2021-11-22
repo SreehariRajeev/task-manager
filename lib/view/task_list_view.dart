@@ -1,6 +1,7 @@
 // ignore_for_file: use_key_in_widget_constructors, must_be_immutable
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taskmanager/controller/task_controller.dart';
@@ -31,34 +32,38 @@ class TaskGroups extends StatelessWidget with AppUtil {
       body: Column(
         children: [
           //Group Name, Add Group and Navigate Buttons
+
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 //Category Name
-                Obx(() =>
-                    CategoryTitleWidget(title: taskController.getGroupName())),
+                CategoryTitleWidget(),
+
                 //Add Group Button and Navigate Arrows
-                Obx(() {
-                  return Row(
-                    children: [
-                      //Add Category Button
-                      AddCategoryBtn(),
+                Row(
+                  children: [
+                    //Add Category Button
+                    AddCategoryBtn(),
 
-                      //Previous Group Button
-                      taskController.navigatorIndex > 0
-                          ? PreviousBtn()
-                          : Container(),
+                    //Previous Group Button
+                    Obx(
+                      () => Visibility(
+                        visible: taskController.canGoBackward(),
+                        child: PreviousBtn(),
+                      ),
+                    ),
 
-                      //Next Group Button
-                      taskController.navigatorIndex + 1 !=
-                              taskController.taskGroups.length
-                          ? NextBtn()
-                          : Container(),
-                    ],
-                  );
-                }),
+                    //Next Group Button
+                    Obx(
+                      () => Visibility(
+                        visible: taskController.canGoForward(),
+                        child: NextBtn(),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -67,16 +72,21 @@ class TaskGroups extends StatelessWidget with AppUtil {
           SearchFieldWidget(),
 
           //View Task and Searched Tasks widget
-          taskController.checkIfSearchedTaskNotEmpty()
-              ? Expanded(
-                  child: SearchResult(
-                    searchedList: taskController.searchedTasks,
-                  ),
-                )
-              : Expanded(
-                  child: Task(
+          Obx(
+            () => Visibility(
+              visible: taskController.checkIfSearchedTaskNotEmpty(),
+              child: Expanded(
+                child: SearchResult(
+                  searchedList: taskController.searchedTasks,
+                ),
+              ),
+              replacement: Expanded(
+                child: Task(
                   groupName: taskController.getGroupName(),
-                )),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
 
@@ -129,8 +139,7 @@ class PreviousBtn extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
-        taskController.navigatorIndex = taskController.navigatorIndex--;
-        taskController.loadTasks(taskController.getGroupName());
+        taskController.navigationFunction(navigateTo: 'previous');
       },
       icon: const Icon(
         Icons.navigate_before,
@@ -149,7 +158,6 @@ class NextBtn extends StatelessWidget {
     return IconButton(
       onPressed: () {
         taskController.navigationFunction(navigateTo: 'next');
-        taskController.loadTasks(taskController.getGroupName());
       },
       icon: const Icon(
         Icons.navigate_next,
@@ -203,14 +211,15 @@ class TaskHeader extends StatelessWidget {
 class Task extends StatelessWidget with AppUtil {
   Task({required this.groupName});
   final TaskController taskController = Get.find();
-  final ValueNotifier<bool> isCompleted = ValueNotifier<bool>(false);
   final String groupName;
   @override
   Widget build(BuildContext context) {
-    return GetX<TaskController>(builder: (controller) {
+    log(taskController.tasks.length.toString());
+
+    return Obx(() {
       return ListView.builder(
           shrinkWrap: true,
-          itemCount: controller.tasks.length,
+          itemCount: taskController.tasks.length,
           itemBuilder: (context, index) {
             return Padding(
               padding: const EdgeInsets.all(8.0),

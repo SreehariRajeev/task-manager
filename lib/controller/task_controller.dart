@@ -10,11 +10,17 @@ class TaskController extends GetxController with AppUtil {
   var tasks = <TaskModel>[].obs;
   var searchedTasks = <TaskModel>[].obs;
   var _navigatorIndex = 0.obs;
-  var startDate = DateTime.now().obs;
-  var endDate = DateTime.now().obs;
+  var _startDate = DateTime.now().obs;
+  var _endDate = DateTime.now().obs;
 
   set navigatorIndex(val) => _navigatorIndex = val;
   int get navigatorIndex => _navigatorIndex.value;
+
+  set startDate(val) => _startDate = val;
+  DateTime get startDate => _startDate.value;
+
+  set endDate(val) => _endDate = val;
+  DateTime get endDate => _endDate.value;
 
   @override
   void onInit() {
@@ -28,7 +34,7 @@ class TaskController extends GetxController with AppUtil {
     log(groupName);
     log(savedTasks.toString());
     if (savedTasks != null) {
-      tasks = RxList(savedTasks.map((e) => TaskModel.fromJson(e)).toList());
+      tasks = savedTasks.map((e) => TaskModel.fromJson(e)).toList().obs;
     } else {
       tasks.clear();
     }
@@ -54,6 +60,7 @@ class TaskController extends GetxController with AppUtil {
 
   //Search Tasks Fucntion
   searchTasks(String searchText) {
+    log('s');
     List<TaskModel> searchResult = [];
     if (searchText.length >= 3) {
       for (var task in tasks) {
@@ -64,7 +71,9 @@ class TaskController extends GetxController with AppUtil {
           searchResult.add(task);
         }
       }
-      searchedTasks = searchResult.obs;
+      searchedTasks.value = searchResult;
+    } else {
+      searchedTasks.clear();
     }
   }
 
@@ -109,11 +118,15 @@ class TaskController extends GetxController with AppUtil {
     int index = navigatorIndex;
     if (navigateTo == 'next') {
       index++;
+      navigatorIndex = index.obs;
+
+      loadTasks(getGroupName());
     } else if (navigateTo == 'previous') {
       index--;
+      navigatorIndex = index.obs;
+
+      loadTasks(getGroupName());
     }
-    navigatorIndex = index.obs;
-    log(navigatorIndex.toString());
   }
 
   bool checkIfSearchedTaskNotEmpty() {
@@ -121,13 +134,19 @@ class TaskController extends GetxController with AppUtil {
   }
 
   String getGroupName() {
-    log(navigatorIndex.toString());
-    log("${taskGroups[navigatorIndex].group} as datas");
     return taskGroups[navigatorIndex].group;
   }
 
   bool checkTaskIsCompleted(int index) {
     return tasks[index].isCompleted;
+  }
+
+  bool canGoBackward() {
+    return navigatorIndex > 0;
+  }
+
+  bool canGoForward() {
+    return navigatorIndex + 1 != taskGroups.length;
   }
 
   clearStorage() {

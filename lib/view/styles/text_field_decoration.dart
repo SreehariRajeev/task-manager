@@ -27,16 +27,17 @@ class CustomDecoration {
 
   InputDecoration textFieldDecoration({String hintTextStr = ""}) {
     return InputDecoration(
-        hintText: hintTextStr,
-        fillColor: Colors.white,
-        filled: true,
-        isDense: true,
-        hintStyle: GoogleFonts.raleway(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
-        border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6.0),
-            borderSide: BorderSide.none));
+      hintText: hintTextStr,
+      fillColor: Colors.white,
+      filled: true,
+      isDense: true,
+      hintStyle: GoogleFonts.raleway(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+      ),
+      border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6.0),
+          borderSide: BorderSide.none),
+    );
   }
 }

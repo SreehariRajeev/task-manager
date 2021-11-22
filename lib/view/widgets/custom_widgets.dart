@@ -39,25 +39,18 @@ PreferredSizeWidget customAppBar = AppBar(
     ));
 
 //Category Header
-Widget categoryTitleWidget({required String title}) {
-  return Text(title,
-      style: GoogleFonts.raleway(
-        color: Colors.white,
-        fontSize: 24,
-        fontWeight: FontWeight.w400,
-      ));
-}
-
 class CategoryTitleWidget extends StatelessWidget {
-  const CategoryTitleWidget({Key? key, required this.title}) : super(key: key);
-  final String title;
+  CategoryTitleWidget({Key? key}) : super(key: key);
+  final TaskController taskController = Get.find();
   @override
   Widget build(BuildContext context) {
-    return Text(title,
-        style: GoogleFonts.raleway(
-          color: Colors.white,
-          fontSize: 24,
-          fontWeight: FontWeight.w400,
-        ));
+    return Obx(
+      () => Text(taskController.getGroupName(),
+          style: GoogleFonts.raleway(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.w400,
+          )),
+    );
   }
 }

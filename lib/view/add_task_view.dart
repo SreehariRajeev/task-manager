@@ -11,16 +11,14 @@ import 'widgets/custom_widgets.dart';
 class AddTask extends StatelessWidget with AppUtil, CustomDecoration {
   final TaskController taskController = Get.find();
 
-  ValueNotifier<TextEditingController> taskTitleCtrl =
-      ValueNotifier(TextEditingController());
-  final taskDetailCtrl = TextEditingController();
-  final startDateCtrl = TextEditingController();
-  final endDateCtrl = TextEditingController();
-  DateTime startDate = DateTime.now();
-  DateTime endDate = DateTime.now();
+  final TextEditingController taskTitleCtrl = TextEditingController();
+  final TextEditingController taskDetailCtrl = TextEditingController();
+  final TextEditingController startDateCtrl = TextEditingController();
+  final TextEditingController endDateCtrl = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final taskGroup = ModalRoute.of(context)!.settings.arguments;
+    final String taskGroup =
+        ModalRoute.of(context)!.settings.arguments.toString();
     return Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
         appBar: customAppBar,
@@ -31,9 +29,7 @@ class AddTask extends StatelessWidget with AppUtil, CustomDecoration {
               //Header
               Padding(
                 padding: const EdgeInsets.all(12.0),
-                child: CategoryTitleWidget(
-                  title: taskGroup.toString(),
-                ),
+                child: CategoryTitleWidget(),
               ),
               //Fields
               Column(
@@ -42,7 +38,7 @@ class AddTask extends StatelessWidget with AppUtil, CustomDecoration {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
-                      controller: taskTitleCtrl.value,
+                      controller: taskTitleCtrl,
                       decoration:
                           textFieldDecoration(hintTextStr: 'Task Title'),
                     ),
@@ -72,11 +68,11 @@ class AddTask extends StatelessWidget with AppUtil, CustomDecoration {
               //Submit Btn
               Align(
                 child: AddTaskSubmitBtn(
-                  taskGroup: taskGroup.toString(),
-                  taskTitleCtrl: taskTitleCtrl.value,
+                  taskGroup: taskGroup,
+                  taskTitleCtrl: taskTitleCtrl,
                   taskDetailCtrl: taskDetailCtrl,
-                  startDate: taskController.startDate.value,
-                  endDate: taskController.endDate.value,
+                  startDate: taskController.startDate,
+                  endDate: taskController.endDate,
                 ),
               ),
             ],
